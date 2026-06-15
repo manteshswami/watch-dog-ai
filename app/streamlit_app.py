@@ -427,18 +427,19 @@ def _get_indexer():
 
 def _init_state():
     defaults = {
-        "frame_id":        0,
-        "running":         False,
-        "processed":       [],
-        "alerts":          [],
-        "chat_history":    [],
-        "cap":             None,
-        "location":        config.DEFAULT_LOCATION,
-        "camera_id":       "CAM-LIVE",
-        "source":          0,
-        "agent":           None,
-        "behavior_buffer": [],
-        "loiter_timers":   {},
+        "frame_id":          0,
+        "running":           False,
+        "processed":         [],
+        "alerts":            [],
+        "chat_history":      [],
+        "cap":               None,
+        "location":          config.DEFAULT_LOCATION,
+        "camera_id":         "CAM-LIVE",
+        "source":            0,
+        "agent":             None,
+        "behavior_buffer":   [],
+        "loiter_timers":     {},
+        "criminal_visible":  False,  # True while criminal is present in frame
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -463,6 +464,37 @@ def _threat_color(level: str) -> str:
 def _risk_color(level: str) -> str:
     return _threat_color(level)
 
+import base64
+
+# ── Beep Sound Setup ───────────────────────────────────────────────────────────
+_BEEP_B64 = None
+
+def _get_audio_b64() -> str:
+    """Load beep_warning.mp3 from the static folder and return as base64 string."""
+    mp3_path = Path(__file__).parent.parent / "static" / "beep_warning.mp3"
+    with open(mp3_path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+def _play_beep_loop(placeholder):
+    """Inject a LOOPING autoplay audio — keeps playing until _stop_beep() is called."""
+    global _BEEP_B64
+    if _BEEP_B64 is None:
+        try:
+            _BEEP_B64 = _get_audio_b64()
+        except FileNotFoundError:
+            return
+
+    placeholder.markdown(
+        f'<audio id="criminal_beep" autoplay loop style="display:none">'
+        f'<source src="data:audio/mpeg;base64,{_BEEP_B64}" type="audio/mpeg">'
+        f'</audio>',
+        unsafe_allow_html=True,
+    )
+
+def _stop_beep(placeholder):
+    """Stop the looping beep by clearing the audio placeholder."""
+    placeholder.empty()
+    
 def _open_cap(source) -> cv2.VideoCapture:
     if st.session_state.get("cap") is not None:
         try:
@@ -645,6 +677,7 @@ with tab1:
     frame_ph = left_col.empty()
     meta_ph  = left_col.empty()
     alert_ph = left_col.empty()
+    beep_ph  = left_col.empty()  # Persistent placeholder for beep audio injection
 
     with right_col:
         st.markdown('<div class="section-title">🧠 Advanced Scene Intelligence</div>', unsafe_allow_html=True)
@@ -737,6 +770,21 @@ with tab1:
                                 alert_ph.error(f"🚨 **[{a['severity']}]** — {a['alert_text']}")
                         else:
                             alert_ph.success("✅ Surveillance clear — No threats logged")
+
+                        # 🔊 Continuous beep while criminal is visible — stop when they leave
+                        criminal_now = bool(event.get("criminal_name"))
+                        was_visible  = st.session_state.get("criminal_visible", False)
+
+                        if criminal_now and not was_visible:
+                            # Criminal just appeared — start looping alarm
+                            _play_beep_loop(beep_ph)
+                            st.session_state["criminal_visible"] = True
+                        elif not criminal_now and was_visible:
+                            # Criminal just disappeared — stop alarm
+                            _stop_beep(beep_ph)
+                            st.session_state["criminal_visible"] = False
+                        # If criminal_now and was_visible: already playing, do nothing
+                        # If not criminal_now and not was_visible: no sound, do nothing
 
                         # Advanced VLM Display
                         threat = event.get("threat_level", "LOW")
