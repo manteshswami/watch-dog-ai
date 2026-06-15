@@ -87,7 +87,11 @@ def _init_db(db_path: str = None) -> None:
 
 def _get_chroma_collection():
     """Return (or create) the ChromaDB collection with Ollama embeddings."""
-    client = chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR)
+    import os
+    # Ensure the persistence directory exists
+    os.makedirs(config.CHROMA_PERSIST_DIR, exist_ok=True)
+    # Explicitly specify a tenant to avoid "default_tenant" connection errors
+    client = chromadb.PersistentClient(path=config.CHROMA_PERSIST_DIR, tenant="default_tenant")
     ef = get_embeddings(config.EMBEDDING_MODEL)
     collection = client.get_or_create_collection(
         name=config.CHROMA_COLLECTION_NAME,

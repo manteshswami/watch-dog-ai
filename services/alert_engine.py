@@ -171,6 +171,6 @@ def format_alert_log(alerts: List[Dict]) -> str:
             ts = a.get("timestamp", "?")
         lines.append(
             f"[{a['severity']}] {ts} | {a['location']} ({a.get('camera_id','?')}) "
-            f"| {a['rule_name']}\n  → {a['alert_text']}"
+            f"| {a['rule_name']}\n  -> {a['alert_text']}"
         )
     return "\n".join(lines)

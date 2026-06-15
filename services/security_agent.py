@@ -159,7 +159,7 @@ def _get_all_alerts(severity: str = "") -> str:
         for a in alerts[:10]:
             ts = a["timestamp"][:16]
             lines.append(
-                f"[{a['severity']}] {ts} | {a['location']} → {a['alert_text'][:100]}"
+                f"[{a['severity']}] {ts} | {a['location']} -> {a['alert_text'][:100]}"
             )
         return f"Found {len(alerts)} alert(s):\n" + "\n".join(lines)
     except Exception as exc:

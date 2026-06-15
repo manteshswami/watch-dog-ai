@@ -70,9 +70,9 @@ def load_criminal_encodings() -> tuple[list, list, dict]:
 
     profiles = load_criminal_profiles()
 
-    if not os.path.exists(config.CRIMINALS_DIR):
-        print(f"[ENCODER] criminal_images/ not found: {config.CRIMINALS_DIR}")
-        return known_encodings, known_names, profiles
+    if not os.path.isdir(config.CRIMINALS_DIR):
+        os.makedirs(config.CRIMINALS_DIR, exist_ok=True)
+        print(f"[ENCODER] created missing criminal_images/ directory at: {config.CRIMINALS_DIR}")
 
     for name, profile in profiles.items():
         person_dir = os.path.join(config.CRIMINALS_DIR, name)

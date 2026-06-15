@@ -240,7 +240,7 @@ def run_pipeline_step(
     _append_log(config.JSON_LOG_PATH, {k: v for k, v in event.items()
                                         if k != "display_frame"})
     if triggered:
-        with open(config.ALERT_LOG_PATH, "a") as f:
+        with open(config.ALERT_LOG_PATH, "a", encoding="cp1252", errors="ignore") as f:
             f.write(alert_engine.format_alert_log(triggered) + "\n")
 
     return event

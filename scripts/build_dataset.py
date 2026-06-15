@@ -143,7 +143,7 @@ def _write_excel(profiles: list):
         ])
 
     wb.save(config.CRIMINALS_XLSX)
-    print(f"[BUILD] Excel saved → {config.CRIMINALS_XLSX}  ({len(profiles)} rows)")
+    print(f"[BUILD] Excel saved -> {config.CRIMINALS_XLSX}  ({len(profiles)} rows)")
 
 
 # ── Main builder ───────────────────────────────────────────────────────────────
@@ -182,7 +182,7 @@ def build_dataset(count: int = 15, download_images: bool = True):
                 save_path = os.path.join(person_dir, f"{img_idx+1:03d}.jpg")
                 if _download(url, save_path):
                     used_portraits.add(uid_key)
-                    print(f"    [DL] {img_idx+1}/{len(urls)} ✓")
+                    print(f"    [DL] {img_idx+1}/{len(urls)} OK")
                 else:
                     _make_placeholder(save_path, name, i, img_idx)
         else:
@@ -194,7 +194,7 @@ def build_dataset(count: int = 15, download_images: bool = True):
 
     _write_excel(profiles)
 
-    print(f"\n[BUILD] ✓ Dataset ready:")
+    print(f"\n[BUILD] Dataset ready:")
     print(f"  {len(profiles)} criminals  |  {count * IMAGES_PER_PERSON} images")
     print(f"  {config.CRIMINALS_XLSX}")
     print(f"  {config.CRIMINALS_DIR}/")

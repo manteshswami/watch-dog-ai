@@ -122,6 +122,8 @@ watchai/
 ---
 
 ## 🧩 Dashboard Tabs
+<img width="1918" height="905" alt="image" src="https://github.com/user-attachments/assets/ede6654d-5169-439e-b64b-a3c7b671c31b" />
+
 
 | Tab | Description |
 |-----|-------------|

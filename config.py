@@ -76,7 +76,7 @@ VLM_TIMEOUT     = 60  # seconds
 
 # ── Ollama (local LLM for agent + embeddings) ─────────────────────────────────
 OLLAMA_BASE_URL  = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-AGENT_LLM_MODEL  = os.getenv("AGENT_LLM_MODEL", "gemma4:e2b")
+AGENT_LLM_MODEL  = os.getenv("AGENT_LLM_MODEL", "llama3.2:1b")
 EMBEDDING_MODEL  = "nomic-embed-text"
 
 # ── Databases (SQLite + ChromaDB) ────────────────────────────────────────────

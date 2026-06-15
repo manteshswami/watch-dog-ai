@@ -85,10 +85,10 @@ def validate_images(profiles: dict) -> dict:
                 if f.lower().endswith(_SUPPORTED)
             )
             if imgs:
-                ok(f"'{name}' → folder  {len(imgs)} image(s)")
+                ok(f"'{name}' -> folder  {len(imgs)} image(s)")
                 image_map[name] = imgs
             else:
-                fail(f"'{name}' → empty folder: {person_dir}/")
+                fail(f"'{name}' -> empty folder: {person_dir}/")
                 image_map[name] = []
             continue
 
@@ -96,10 +96,10 @@ def validate_images(profiles: dict) -> dict:
         photo = profile.get("photo", "").strip() or f"{name}.jpg"
         fpath = os.path.join(config.CRIMINALS_DIR, photo)
         if os.path.exists(fpath):
-            ok(f"'{name}' → single file  {photo}")
+            ok(f"'{name}' -> single file  {photo}")
             image_map[name] = [fpath]
         else:
-            fail(f"'{name}' → image not found: {fpath}")
+            fail(f"'{name}' -> image not found: {fpath}")
             image_map[name] = []
 
     total  = len(profiles)
@@ -131,10 +131,10 @@ def validate_face_detection(image_map: dict):
                 img  = face_recognition.load_image_file(path)
                 locs = face_recognition.face_locations(img, model="hog")
                 if locs:
-                    ok(f"'{name}/{fname}' → {len(locs)} face(s)")
+                    ok(f"'{name}/{fname}' -> {len(locs)} face(s)")
                     detected += 1
                 else:
-                    fail(f"'{name}/{fname}' → 0 faces — will be SKIPPED at runtime")
+                    fail(f"'{name}/{fname}' -> 0 faces — will be SKIPPED at runtime")
             except Exception as e:
                 fail(f"'{name}/{fname}' — {e}")
 
@@ -174,7 +174,7 @@ def validate_risk_scores(profiles: dict):
     for lvl in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
         cnt = level_counts[lvl]
         if cnt:
-            bar = "█" * cnt
+            bar = "#" * cnt
             print(f"    {lvl:<10}  {cnt:>3}  {bar}")
 
 
